@@ -1,0 +1,68 @@
+services:
+  sandbox:
+    image: debian:bookworm-slim
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./bin:/app
+    ports:
+      - "8080:8080"
+      - "50052:50052"
+    environment:
+      CLIENT_HOST: host.docker.internal
+    command: /app/sandbox
+
+  odd-grid:
+    build:
+      context: .
+      dockerfile: captcha/captcha-example/Dockerfile
+    depends_on:
+      - sandbox
+    environment:
+      TARGET_HOST: sandbox:50052
+      HOST: odd-grid
+      CHALLENGE_ID: odd-grid
+
+  reality-swipe:
+    build:
+      context: .
+      dockerfile: captcha/captcha-example/Dockerfile
+    depends_on:
+      - sandbox
+    environment:
+      TARGET_HOST: sandbox:50052
+      HOST: reality-swipe
+      CHALLENGE_ID: reality-swipe
+
+  foreign-letter:
+    build:
+      context: .
+      dockerfile: captcha/captcha-example/Dockerfile
+    depends_on:
+      - sandbox
+    environment:
+      TARGET_HOST: sandbox:50052
+      HOST: foreign-letter
+      CHALLENGE_ID: foreign-letter
+
+  two-baskets:
+    build:
+      context: .
+      dockerfile: captcha/captcha-example/Dockerfile
+    depends_on:
+      - sandbox
+    environment:
+      TARGET_HOST: sandbox:50052
+      HOST: two-baskets
+      CHALLENGE_ID: two-baskets
+
+  track-object:
+    build:
+      context: .
+      dockerfile: captcha/captcha-example/Dockerfile
+    depends_on:
+      - sandbox
+    environment:
+      TARGET_HOST: sandbox:50052
+      HOST: track-object
+      CHALLENGE_ID: track-object

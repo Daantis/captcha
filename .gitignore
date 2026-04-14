@@ -1,0 +1,14 @@
+/.git
+/bin/
+
+# Frontend local deps
+/captcha/captcha-example/frontend/node_modules/
+
+# Common local artifacts
+*.log
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.*

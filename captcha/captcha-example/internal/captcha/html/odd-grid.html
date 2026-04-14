@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>__CAPTCHA_TITLE__</title>
+  <script type="module" crossorigin>var p=(e=>(e[e.Ready=1]="Ready",e[e.Tap=2]="Tap",e[e.Swipe=3]="Swipe",e[e.DragDrop=4]="DragDrop",e[e.AckFrame=5]="AckFrame",e))(p||{}),f=(e=>(e[e.Init=101]="Init",e[e.Patch=102]="Patch",e[e.Prompt=103]="Prompt",e[e.Progress=104]="Progress",e[e.Result=105]="Result",e))(f||{});function g(e){const t=new Uint8Array(12),a=new DataView(t.buffer);return t[0]=e.opcode,a.setUint16(1,e.seq,!0),t[3]=e.phase&255,a.setUint16(4,e.subject??0,!0),a.setUint16(6,e.target??0,!0),a.setInt16(8,e.value??0,!0),a.setInt16(10,e.extra??0,!0),t}function $(e){const t=w(e),a=new DataView(t.buffer,t.byteOffset,t.byteLength),s=a.getUint16(8,!0),n=t.slice(10,10+s);return{opcode:t[0],seq:a.getUint16(1,!0),phase:t[3],entityId:a.getUint16(4,!0),progress:t[6],flags:t[7],payload:JSON.parse(new TextDecoder().decode(n))}}function m(e){const t=new Uint8Array(e.length+1);return t[0]=128,t.set(e,1),t}function h(e){return e instanceof Uint8Array?e:e instanceof ArrayBuffer?new Uint8Array(e):ArrayBuffer.isView(e)?new Uint8Array(e.buffer,e.byteOffset,e.byteLength):null}function w(e){return e.length>1&&(e[0]&128)!==0?e.slice(1):e}function y(e,t,a,s){if(!t){e.innerHTML=`
+            <main class="shell loading">
+                <section class="panel">
+                    <div class="eyebrow">Подключение</div>
+                    <h1>Загружаем задание</h1>
+                    <p>Сервер подготавливает CAPTCHA.</p>
+                </section>
+            </main>
+        `;return}document.body.dataset.mode=t.mode;const n=a||t.status||"";e.innerHTML=`
+        <main class="shell">
+            <section class="panel">
+                <header class="hero">
+                    <div class="eyebrow">${r(t.title)}</div>
+                    <div class="progress-row">
+                        <h1>${r(t.instruction)}</h1>
+                        <div class="progress-pill">${r(t.progressText)}</div>
+                    </div>
+                    ${v(t.badges??[])}
+                    ${n?`<p class="status">${r(n)}</p>`:""}
+                </header>
+                ${A(t.layout)}
+            </section>
+        </main>
+    `,U(e,s),N(e,s),P(e,s)}function v(e){return e.length?`<div class="badges">${e.map(t=>`<span>${r(t)}</span>`).join("")}</div>`:""}function A(e){switch(e.type){case"grid":case"letters":return k(e.options??[],e.columns??2,e.type==="letters");case"reality":return D(e.card,e.hintLeft??"Невозможно",e.hintRight??"Возможно");case"baskets":return E(e.options?.[0],e.baskets??[]);case"track":return q(e);case"complete":return T(e.card);default:return'<section class="board"><p>Неизвестный тип задания.</p></section>'}}function k(e,t,a){return`
+        <section class="board grid-board" style="--columns:${Math.max(2,t)}">
+            ${e.map(s=>`
+                <button
+                    class="option-card${s.muted?" muted":""}${a?" glyph":""}"
+                    data-tap="${s.id}"
+                    ${s.muted?"disabled":""}
+                >
+                    ${s.icon?`<span class="option-icon">${r(s.icon)}</span>`:""}
+                    <span class="option-label">${r(s.label)}</span>
+                </button>
+            `).join("")}
+        </section>
+    `}function D(e,t,a){return e?`
+        <section class="board reality-board">
+            <article class="swipe-card" data-swipe-card="${e.id}">
+                <div class="swipe-icon">${r(e.icon??"◉")}</div>
+                <h2>${r(e.title)}</h2>
+                <p>${R(e.body)}</p>
+            </article>
+            <div class="swipe-actions">
+                <button class="action ghost" data-swipe="${e.id}" data-direction="-1">${r(t)}</button>
+                <button class="action" data-swipe="${e.id}" data-direction="1">${r(a)}</button>
+            </div>
+        </section>
+    `:""}function E(e,t){return e?`
+        <section class="board baskets-board">
+            <div
+                class="drag-card"
+                draggable="true"
+                data-draggable="${e.id}"
+            >
+                ${e.icon?`<span class="option-icon">${r(e.icon)}</span>`:""}
+                <span class="option-label">${r(e.label)}</span>
+            </div>
+            <div class="basket-grid">
+                ${t.map(a=>`
+                    <div class="basket-target" data-basket="${a.id}">
+                        <strong>${r(a.label)}</strong>
+                        <span>${r(a.hint??"")}</span>
+                        <button class="action slim" data-drop-choice="${a.id}" data-card="${e.id}">Отправить сюда</button>
+                    </div>
+                `).join("")}
+            </div>
+        </section>
+    `:""}function q(e){const t=e.slots??[],s=(e.sequence??[])[0];return`
+        <section class="board track-board">
+            <div class="track-target">
+                <span class="eyebrow">Цель</span>
+                <strong>${r(e.target??"Следите за фишкой")}</strong>
+            </div>
+            <div class="track-grid">
+                ${t.map((n,i)=>L(n,s,i)).join("")}
+            </div>
+        </section>
+    `}function L(e,t,a){const s=t&&(t.from===a+1||t.to===a+1);return`
+        <button
+            class="track-slot${e.active?" interactive":""}${s?" flash":""}"
+            data-slot="${e.id}"
+            ${e.active?"":"disabled"}
+        >
+            <span>${r(e.label)}</span>
+            <strong>${r(e.token??"•")}</strong>
+        </button>
+    `}function T(e){return e?`
+        <section class="board complete-board">
+            <article class="done-card">
+                <h2>${r(e.title)}</h2>
+                <p>${r(e.body)}</p>
+            </article>
+        </section>
+    `:""}function U(e,t){e.querySelectorAll("[data-tap]").forEach(a=>{a.addEventListener("click",()=>{const s=Number(a.dataset.tap);t.tap(s)})}),e.querySelectorAll("[data-slot]").forEach(a=>{a.addEventListener("click",()=>{const s=Number(a.dataset.slot);t.tap(s)})}),e.querySelectorAll("[data-drop-choice]").forEach(a=>{a.addEventListener("click",()=>{t.dragDrop(Number(a.dataset.card),Number(a.dataset.dropChoice))})})}function N(e,t){e.querySelectorAll("[data-swipe]").forEach(a=>{a.addEventListener("click",()=>{t.swipe(Number(a.dataset.swipe),Number(a.dataset.direction))})}),e.querySelectorAll("[data-swipe-card]").forEach(a=>{let s=0;a.addEventListener("pointerdown",n=>{s=n.clientX}),a.addEventListener("pointerup",n=>{const i=n.clientX-s;Math.abs(i)<30||t.swipe(Number(a.dataset.swipeCard),i>0?1:-1)})})}function P(e,t){let a=0;e.querySelectorAll("[data-draggable]").forEach(s=>{s.addEventListener("dragstart",n=>{a=Number(s.dataset.draggable),n.dataTransfer?.setData("text/plain",String(a))})}),e.querySelectorAll("[data-basket]").forEach(s=>{s.addEventListener("dragover",n=>{n.preventDefault()}),s.addEventListener("drop",n=>{n.preventDefault();const i=n.dataTransfer?.getData("text/plain"),d=Number(i||a),l=Number(s.dataset.basket);t.dragDrop(d,l)})})}function r(e){return e.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;")}function R(e){return r(e).replaceAll(`
+`,"<br />")}function j(e){const t=document.getElementById("app");if(!t)return;const a=window.__CAPTCHA_BOOTSTRAP__;let s=1,n=0,i=null,d="Подготавливаем задание...";const l=(c,o={})=>{const u=g({opcode:c,seq:s++,phase:n,...o});window.top.postMessage({type:"captcha:sendData",data:m(u)})},b=()=>{y(t,i,d,{tap(c){l(p.Tap,{subject:c})},swipe(c,o){l(p.Swipe,{subject:c,value:o})},dragDrop(c,o){l(p.DragDrop,{subject:c,target:o})}})};window.addEventListener("message",c=>{if(c.data?.type!=="captcha:serverData")return;const o=h(c.data.data);if(!o)return;const u=$(o);n=u.phase,i=u.payload.view,d=u.payload.message||i.status||"",b(),l(p.AckFrame,{value:u.seq}),u.opcode===f.Result&&(d=i?.status||"Ответ отправлен.",b())}),d="Запрашиваем задание у сервера...",b(),a?.mode===e?l(p.Ready):(d="Режим задания не совпал с шаблоном.",b())}j("odd-grid");</script>
+  <style rel="stylesheet" crossorigin>:root{color-scheme:light;--bg: radial-gradient(circle at top, #fff4d6 0%, #f2efe7 45%, #dde6e8 100%);--panel: rgba(255, 255, 255, .86);--border: rgba(15, 23, 42, .08);--text: #102033;--muted: #617086;--shadow: 0 20px 45px rgba(16, 32, 51, .12)}*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Segoe UI,Trebuchet MS,sans-serif;color:var(--text);background:var(--bg)}body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 15% 20%,rgba(255,214,10,.18),transparent 28%),radial-gradient(circle at 85% 10%,rgba(59,130,246,.18),transparent 24%),radial-gradient(circle at 75% 75%,rgba(34,197,94,.14),transparent 22%);pointer-events:none}#app{position:relative;min-height:100vh;padding:18px}.shell{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 36px)}.panel{width:min(100%,860px);border:1px solid var(--border);background:var(--panel);border-radius:28px;box-shadow:var(--shadow);padding:22px;backdrop-filter:blur(18px)}.hero h1{margin:10px 0 8px;font-size:clamp(1.3rem,2vw,1.9rem);line-height:1.2}.eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;color:var(--muted)}.progress-row{display:flex;gap:12px;justify-content:space-between;align-items:flex-start}.progress-pill{white-space:nowrap;border-radius:999px;background:#10203314;padding:10px 14px;font-size:.9rem;color:var(--muted)}.status{margin:10px 0 0;color:var(--muted)}.badges{display:flex;flex-wrap:wrap;gap:8px}.badges span{padding:6px 10px;border-radius:999px;background:#ffffffe6;border:1px solid var(--border);font-size:.8rem}.board{margin-top:20px}.grid-board{display:grid;grid-template-columns:repeat(var(--columns),minmax(0,1fr));gap:14px}.option-card,.track-slot,.action,.drag-card{border:1px solid var(--border);border-radius:22px;background:#ffffffe6;color:var(--text);transition:transform .16s ease,box-shadow .16s ease,opacity .16s ease}.option-card,.track-slot{padding:18px 14px;min-height:112px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer}.option-card:hover,.track-slot.interactive:hover,.action:hover,.drag-card:hover{transform:translateY(-2px);box-shadow:0 14px 30px #1020331f}.option-card.muted{opacity:.45;cursor:default}.option-card.glyph .option-label{font-size:2rem}.option-icon{font-size:1.8rem}.option-label{font-size:1rem;text-align:center}.reality-board{display:grid;gap:16px}.swipe-card,.done-card{border-radius:26px;padding:22px;background:linear-gradient(135deg,#fffffff7,#fff5d8eb);border:1px solid var(--border);min-height:200px}.swipe-card{cursor:grab}.swipe-card h2,.done-card h2{margin:10px 0;font-size:1.35rem}.swipe-card p,.done-card p{margin:0;font-size:1.05rem;line-height:1.5}.swipe-icon{font-size:2rem}.swipe-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.action{padding:14px 16px;cursor:pointer;font-size:1rem}.action.ghost{background:#ffffffbf}.action.slim{margin-top:10px;width:100%;font-size:.92rem}.baskets-board{display:grid;gap:16px}.drag-card{display:flex;gap:12px;align-items:center;justify-content:center;min-height:90px;cursor:grab;padding:16px}.basket-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.basket-target{padding:18px;border-radius:24px;border:1px dashed rgba(16,32,51,.22);background:#ffffffbd}.basket-target strong,.track-target strong{display:block;margin-top:6px;font-size:1.06rem}.basket-target span,.track-target span{color:var(--muted)}.track-board{display:grid;gap:16px}.track-target{padding:18px;border-radius:22px;background:#ffffffbf;border:1px solid var(--border)}.track-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.track-slot strong{font-size:2rem}.track-slot.flash{animation:flash .36s ease}.complete-board{display:flex}@keyframes flash{0%{transform:scale(.98)}50%{transform:scale(1.05)}to{transform:scale(1)}}@media(max-width:720px){#app{padding:12px}.panel{padding:16px;border-radius:22px}.progress-row,.basket-grid,.track-grid,.swipe-actions{grid-template-columns:1fr;display:grid}.grid-board{grid-template-columns:repeat(2,minmax(0,1fr))}}</style>
+</head>
+<body data-mode="odd-grid">
+<div id="app"></div>
+<script>
+    window.__CAPTCHA_BOOTSTRAP__ = {
+        challengeId: "__CAPTCHA_ID__",
+        mode: "__CAPTCHA_MODE__",
+        title: "__CAPTCHA_TITLE__"
+    };
+</script>
+</body>
+</html>

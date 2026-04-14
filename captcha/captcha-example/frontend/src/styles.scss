@@ -1,0 +1,318 @@
+:root {
+    color-scheme: light;
+    --bg: radial-gradient(circle at top, #fff4d6 0%, #f2efe7 45%, #dde6e8 100%);
+    --panel: rgba(255, 255, 255, 0.86);
+    --border: rgba(15, 23, 42, 0.08);
+    --text: #102033;
+    --muted: #617086;
+    --shadow: 0 20px 45px rgba(16, 32, 51, 0.12);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    min-height: 100%;
+    font-family: "Segoe UI", "Trebuchet MS", sans-serif;
+    color: var(--text);
+    background: var(--bg);
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle at 15% 20%, rgba(255, 214, 10, 0.18), transparent 28%),
+        radial-gradient(circle at 85% 10%, rgba(59, 130, 246, 0.18), transparent 24%),
+        radial-gradient(circle at 75% 75%, rgba(34, 197, 94, 0.14), transparent 22%);
+    pointer-events: none;
+}
+
+#app {
+    position: relative;
+    min-height: 100vh;
+    padding: 18px;
+}
+
+.shell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 36px);
+}
+
+.panel {
+    width: min(100%, 860px);
+    border: 1px solid var(--border);
+    background: var(--panel);
+    border-radius: 28px;
+    box-shadow: var(--shadow);
+    padding: 22px;
+    backdrop-filter: blur(18px);
+}
+
+.hero h1 {
+    margin: 10px 0 8px;
+    font-size: clamp(1.3rem, 2vw, 1.9rem);
+    line-height: 1.2;
+}
+
+.eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.72rem;
+    color: var(--muted);
+}
+
+.progress-row {
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.progress-pill {
+    white-space: nowrap;
+    border-radius: 999px;
+    background: rgba(16, 32, 51, 0.08);
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.status {
+    margin: 10px 0 0;
+    color: var(--muted);
+}
+
+.badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.badges span {
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--border);
+    font-size: 0.8rem;
+}
+
+.board {
+    margin-top: 20px;
+}
+
+.grid-board {
+    display: grid;
+    grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+    gap: 14px;
+}
+
+.option-card,
+.track-slot,
+.action,
+.drag-card {
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text);
+    transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+}
+
+.option-card,
+.track-slot {
+    padding: 18px 14px;
+    min-height: 112px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.option-card:hover,
+.track-slot.interactive:hover,
+.action:hover,
+.drag-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(16, 32, 51, 0.12);
+}
+
+.option-card.muted {
+    opacity: 0.45;
+    cursor: default;
+}
+
+.option-card.glyph .option-label {
+    font-size: 2rem;
+}
+
+.option-icon {
+    font-size: 1.8rem;
+}
+
+.option-label {
+    font-size: 1rem;
+    text-align: center;
+}
+
+.reality-board {
+    display: grid;
+    gap: 16px;
+}
+
+.swipe-card,
+.done-card {
+    border-radius: 26px;
+    padding: 22px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.97), rgba(255,245,216,0.92));
+    border: 1px solid var(--border);
+    min-height: 200px;
+}
+
+.swipe-card {
+    cursor: grab;
+}
+
+.swipe-card h2,
+.done-card h2 {
+    margin: 10px 0;
+    font-size: 1.35rem;
+}
+
+.swipe-card p,
+.done-card p {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.5;
+}
+
+.swipe-icon {
+    font-size: 2rem;
+}
+
+.swipe-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.action {
+    padding: 14px 16px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.action.ghost {
+    background: rgba(255, 255, 255, 0.75);
+}
+
+.action.slim {
+    margin-top: 10px;
+    width: 100%;
+    font-size: 0.92rem;
+}
+
+.baskets-board {
+    display: grid;
+    gap: 16px;
+}
+
+.drag-card {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    min-height: 90px;
+    cursor: grab;
+    padding: 16px;
+}
+
+.basket-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.basket-target {
+    padding: 18px;
+    border-radius: 24px;
+    border: 1px dashed rgba(16, 32, 51, 0.22);
+    background: rgba(255, 255, 255, 0.74);
+}
+
+.basket-target strong,
+.track-target strong {
+    display: block;
+    margin-top: 6px;
+    font-size: 1.06rem;
+}
+
+.basket-target span,
+.track-target span {
+    color: var(--muted);
+}
+
+.track-board {
+    display: grid;
+    gap: 16px;
+}
+
+.track-target {
+    padding: 18px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid var(--border);
+}
+
+.track-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.track-slot strong {
+    font-size: 2rem;
+}
+
+.track-slot.flash {
+    animation: flash 360ms ease;
+}
+
+.complete-board {
+    display: flex;
+}
+
+@keyframes flash {
+    0% { transform: scale(0.98); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@media (max-width: 720px) {
+    #app {
+        padding: 12px;
+    }
+
+    .panel {
+        padding: 16px;
+        border-radius: 22px;
+    }
+
+    .progress-row,
+    .basket-grid,
+    .track-grid,
+    .swipe-actions {
+        grid-template-columns: 1fr;
+        display: grid;
+    }
+
+    .grid-board {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
